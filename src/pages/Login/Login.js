@@ -12,7 +12,6 @@ const Login = () => {
   const { login, error: authError, loading } = useAuthentication();
 
   const handleSubmit = async (e) => {
-    console.log('aqui');
     e.preventDefault();
 
     setError("");

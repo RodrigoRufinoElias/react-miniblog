@@ -14,7 +14,6 @@ const Register = () => {
   const { createUser, error: authError, loading } = useAuthentication();
 
   const handleSubmit = async (e) => {
-    console.log('aqui');
     e.preventDefault();
 
     setError("");
