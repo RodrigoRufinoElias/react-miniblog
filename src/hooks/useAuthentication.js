@@ -1,4 +1,3 @@
-import { async } from "@firebase/util";
 import {
   getAuth,
   createUserWithEmailAndPassword,
@@ -8,8 +7,6 @@ import {
 } from "firebase/auth";
 
 import { useState, useEffect } from "react";
-
-import { db } from "../firebase/config";
 
 export const useAuthentication = () => {
   const [error, setError] = useState(null);
@@ -31,10 +28,11 @@ export const useAuthentication = () => {
 
     setLoading(true);
 
-    setError(null);
-
     try {
-      const { user } = createUserWithEmailAndPassword(
+
+      console.log('data', data);
+
+      const { user } = await createUserWithEmailAndPassword(
         auth,
         data.email,
         data.password
@@ -44,23 +42,26 @@ export const useAuthentication = () => {
         displayName: data.displayName,
       });
 
-      setLoading(false);
-
       return user;
+
     } catch (error) {
-      let errorMsg;
+
+      console.log(error.message);
+      console.log(typeof error.message);
+
+      let systemErrorMessage;
 
       if (error.message.includes("Password")) {
-        errorMsg = "A senha precisa conter pelo menos 6 caracteres.";
+        systemErrorMessage = "A senha precisa conter pelo menos 6 caracteres.";
       } else if (error.message.includes("email-already")) {
-        errorMsg = "E-mail já cadastrado.";
+        systemErrorMessage = "E-mail já cadastrado.";
       } else {
-        errorMsg = "Ocorreu um erro. Por favor tente mais tarde.";
+        systemErrorMessage = "Ocorreu um erro. Por favor tente mais tarde.";
       }
-
-      setLoading(false);
-      setError(errorMsg);
+      setError(systemErrorMessage);
     }
+
+    setLoading(false);
   };
 
   // login - sign in
@@ -74,18 +75,22 @@ export const useAuthentication = () => {
       await signInWithEmailAndPassword(auth, data.email, data.password);
       setLoading(false);
     } catch (error) {
-      let errorMsg;
+      
+      console.log(error.message);
+      console.log(typeof error.message);
+
+      let systemErrorMessage;
 
       if (error.message.includes("user-not-found")) {
-        errorMsg = "Usuário não encontrado.";
+        systemErrorMessage = "Usuário não encontrado.";
       } else if (error.message.includes("wrong-password")) {
-        errorMsg = "Senha incorreta.";
+        systemErrorMessage = "Senha incorreta.";
       } else {
-        errorMsg = "Ocorreu um erro. Por favor tente mais tarde.";
+        systemErrorMessage = "Ocorreu um erro. Por favor tente mais tarde.";
       }
 
       setLoading(false);
-      setError(errorMsg);
+      setError(systemErrorMessage);
     }
   };
 
